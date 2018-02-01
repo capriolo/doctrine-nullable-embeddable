@@ -42,6 +42,10 @@ final class NullableEmbeddableListener
                 continue;
             }
 
+            if (! empty($this->propertyMap[get_class($embeddable)])) {
+                $this->postLoad($embeddable);
+            }
+
             if ($embeddable->isNull()) {
                 $this->propertyAccessor->setValue($object, $propertyPath, null);
             }
