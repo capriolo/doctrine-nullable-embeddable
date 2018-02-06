@@ -31,11 +31,20 @@ final class NullableEmbeddableListener
 
     public function postLoad($object)
     {
-        if (empty($this->propertyMap[get_class($object)])) {
+        $classes = [get_class($object)] + class_parents($object);
+        $propertyPaths = null;
+
+        foreach ($classes as $class) {
+            if (!empty($this->propertyMap[$class])) {
+                $propertyPaths = $this->propertyMap[$class];
+                break;
+            }
+        }
+
+        if (null === $propertyPaths) {
             return;
         }
 
-        $propertyPaths = $this->propertyMap[get_class($object)];
         foreach ($propertyPaths as $propertyPath) {
             $embeddable = $this->propertyAccessor->getValue($object, $propertyPath);
             if (!$embeddable instanceof NullableEmbeddableInterface) {
